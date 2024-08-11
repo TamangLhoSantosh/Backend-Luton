@@ -1,25 +1,42 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/UserController");
+const { profileImage } = require("../middleware/uploadMiddlewar");
 
-// Create a new user
-// POST /users
-router.post("/", userController.createUser);
-
-// Get all users
-// GET /users
+/**
+ * @description To get all user
+ * @api /user
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
 router.get("/", userController.getAllUsers);
 
-// Get a user by ID
-// GET /users/:id
+/**
+ * @description To get all user
+ * @api /user/:id
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
 router.get("/:id", userController.getUserById);
 
-// Update a user by ID
-// PUT /users/:id
+/**
+ * @description To get all user
+ * @api /user/:id
+ * @access PUBLIC
+ * @type PUT
+ * @return response
+ */
 router.put("/:id", userController.updateUserById);
 
-// Delete a user by ID
-// DELETE /users/:id
+/**
+ * @description To get all user
+ * @api /user/:id
+ * @access PUBLIC
+ * @type DELETE
+ * @return response
+ */
 router.delete("/:id", userController.deleteUserById);
 
 module.exports = router;

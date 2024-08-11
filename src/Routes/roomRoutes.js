@@ -2,24 +2,49 @@ const express = require("express");
 const router = express.Router();
 const roomController = require("../controllers/RoomController");
 
-// Create a new room
-// POST /rooms
+/**
+ * @description To create a new room
+ * @api /room
+ * @access PUBLIC
+ * @type POST
+ * @return response
+ */
 router.post("/", roomController.createRoom);
 
-// Get all rooms
-// GET /rooms
+/**
+ * @description To get all rooms
+ * @api /room
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
 router.get("/", roomController.getAllRooms);
 
-// Get a room by ID
-// GET /rooms/:id
+/**
+ * @description To get specific room
+ * @api /room/:id
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
 router.get("/:id", roomController.getRoomById);
 
-// Update a room by ID
-// PUT /rooms/:id
+/**
+ * @description To update room
+ * @api /room/:id
+ * @access PUBLIC
+ * @type PUT
+ * @return response
+ */
 router.put("/:id", roomController.updateRoomById);
 
-// Delete a room by ID
-// DELETE /rooms/:id
+/**
+ * @description To delete room
+ * @api /room/:id
+ * @access PUBLIC
+ * @type DELETE
+ * @return response
+ */
 router.delete("/:id", roomController.deleteRoomById);
 
 module.exports = router;

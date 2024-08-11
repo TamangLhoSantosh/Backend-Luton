@@ -1,15 +1,5 @@
 const User = require("../models/User");
-
-// Create a new user
-const createUser = async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+const domain = "http://localhost:8000";
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -58,7 +48,6 @@ const deleteUserById = async (req, res) => {
 };
 
 module.exports = {
-  createUser,
   getAllUsers,
   getUserById,
   updateUserById,

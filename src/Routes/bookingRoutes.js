@@ -2,24 +2,49 @@ const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/BookingController");
 
-// Create a new booking
-// POST /bookings
+/**
+ * @description To create a new booking
+ * @api /booking
+ * @access PUBLIC
+ * @type POST
+ * @return response
+ */
 router.post("/", bookingController.createBooking);
 
-// Get all bookings
-// GET /bookings
+/**
+ * @description To get all bookings
+ * @api /booking
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
 router.get("/", bookingController.getAllBookings);
 
-// Get a booking by ID
-// GET /bookings/:id
+/**
+ * @description To get specific bookings
+ * @api /booking/:id
+ * @access PUBLIC
+ * @type Get
+ * @return response
+ */
 router.get("/:id", bookingController.getBookingById);
 
-// Update a booking by ID
-// PUT /bookings/:id
+/**
+ * @description To update bookings
+ * @api /booking/:id
+ * @access PUBLIC
+ * @type PUT
+ * @return response
+ */
 router.put("/:id", bookingController.updateBookingById);
 
-// Delete a booking by ID
-// DELETE /bookings/:id
+/**
+ * @description To delete bookings
+ * @api /booking/:id
+ * @access PUBLIC
+ * @type DELETE
+ * @return response
+ */
 router.delete("/:id", bookingController.deleteBookingById);
 
 module.exports = router;
