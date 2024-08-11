@@ -12,6 +12,15 @@ const bookingController = require("../controllers/BookingController");
 router.post("/", bookingController.createBooking);
 
 /**
+ * @description To check the availability of a room
+ * @api /booking/check-availability
+ * @access PUBLIC
+ * @type POST
+ * @return response
+ */
+router.post("/check-availability", bookingController.checkRoomAvailability);
+
+/**
  * @description To get all bookings
  * @api /booking
  * @access PUBLIC

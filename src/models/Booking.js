@@ -28,8 +28,8 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["booked", "checked-in", "checked-out", "cancelled"],
-    default: "booked",
+    enum: ["open", "booked", "checked-in", "checked-out", "cancelled"],
+    default: "open",
   },
 });
 

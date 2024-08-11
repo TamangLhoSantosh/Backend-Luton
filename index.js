@@ -11,11 +11,13 @@ app.use(cors());
 const authRoutes = require("./src/Routes/authRoutes");
 const userRoutes = require("./src/Routes/userRoutes");
 const roomRoutes = require("./src/Routes/roomRoutes");
+const roomTypeRoutes = require("./src/Routes/roomTypeRoutes");
 const bookingRoutes = require("./src/Routes/bookingRoutes");
 
 // Use routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/roomType", roomTypeRoutes);
 app.use("/room", roomRoutes);
 app.use("/booking", bookingRoutes);
 

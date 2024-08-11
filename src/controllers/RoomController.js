@@ -14,7 +14,7 @@ const createRoom = async (req, res) => {
 // Get all rooms
 const getAllRooms = async (req, res) => {
   try {
-    const rooms = await Room.find().populate("hotel");
+    const rooms = await Room.find();
     res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -24,7 +24,7 @@ const getAllRooms = async (req, res) => {
 // Get a room by ID
 const getRoomById = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id).populate("hotel");
+    const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).json({ error: "Room not found" });
     res.status(200).json(room);
   } catch (error) {
