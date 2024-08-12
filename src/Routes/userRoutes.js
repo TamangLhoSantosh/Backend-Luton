@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/UserController");
-const { profileImage } = require("../middleware/uploadMiddlewar");
+const { profileImage } = require("../middleware/uploadMiddleware");
 
 /**
  * @description To get all user

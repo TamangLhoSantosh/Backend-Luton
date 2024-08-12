@@ -13,6 +13,8 @@ const userRoutes = require("./src/Routes/userRoutes");
 const roomRoutes = require("./src/Routes/roomRoutes");
 const roomTypeRoutes = require("./src/Routes/roomTypeRoutes");
 const bookingRoutes = require("./src/Routes/bookingRoutes");
+const subscribedRoutes = require("./src/Routes/SubscribedRoutes");
+const contactUsRoutes = require("./src/Routes/ContactUsRoutes");
 
 // Use routes
 app.use("/auth", authRoutes);
@@ -20,6 +22,11 @@ app.use("/user", userRoutes);
 app.use("/roomType", roomTypeRoutes);
 app.use("/room", roomRoutes);
 app.use("/booking", bookingRoutes);
+app.use("/subscribe", subscribedRoutes);
+app.use("/contactUs", contactUsRoutes);
+
+// Serve static files
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

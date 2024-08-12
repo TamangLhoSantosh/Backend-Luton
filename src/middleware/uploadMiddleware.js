@@ -1,6 +1,5 @@
 const multer = require("multer");
 const { diskStorage } = require("multer");
-// const diskStorage = multer.diskStorage;
 const path = require("path");
 
 // Regular expression to eliminate whitespace and special characters from file names
