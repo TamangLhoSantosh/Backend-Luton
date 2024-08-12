@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/BookingController");
+const auth = require("../middleware/authMiddleware");
+const { authorizeRole } = require("../middleware/authorizationMiddleware");
 
 /**
  * @description To create a new booking
@@ -27,7 +29,12 @@ router.post("/check-availability", bookingController.checkRoomAvailability);
  * @type GET
  * @return response
  */
-router.get("/", bookingController.getAllBookings);
+router.get(
+  "/",
+  auth,
+  authorizeRole("staff" || "admin"),
+  bookingController.getAllBookings
+);
 
 /**
  * @description To get specific bookings
@@ -36,7 +43,7 @@ router.get("/", bookingController.getAllBookings);
  * @type Get
  * @return response
  */
-router.get("/:id", bookingController.getBookingById);
+router.get("/:id", auth, bookingController.getBookingById);
 
 /**
  * @description To update bookings
@@ -45,7 +52,7 @@ router.get("/:id", bookingController.getBookingById);
  * @type PUT
  * @return response
  */
-router.put("/:id", bookingController.updateBookingById);
+router.put("/:id", auth, bookingController.updateBookingById);
 
 /**
  * @description To delete bookings
@@ -54,6 +61,6 @@ router.put("/:id", bookingController.updateBookingById);
  * @type DELETE
  * @return response
  */
-router.delete("/:id", bookingController.deleteBookingById);
+router.delete("/:id", auth, bookingController.deleteBookingById);
 
 module.exports = router;

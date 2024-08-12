@@ -5,6 +5,8 @@ const {
   getContactUs,
   getContactUsById,
 } = require("../controllers/ContactUsController");
+const auth = require("../middleware/authMiddleware");
+const { authorizeRole } = require("../middleware/authorizationMiddleware");
 
 /**
  * @description To insert into contact us
@@ -22,7 +24,7 @@ router.post("/", contactUs);
  * @type GET
  * @return response
  */
-router.get("/", getContactUs);
+router.get("/", auth, authorizeRole("admin"), getContactUs);
 
 /**
  * @description To get contactus by id
@@ -31,6 +33,6 @@ router.get("/", getContactUs);
  * @type GET
  * @return response
  */
-router.get("/:id", getContactUsById);
+router.get("/:id", auth, authorizeRole("admin"), getContactUsById);
 
 module.exports = router;

@@ -1,17 +1,30 @@
 const Booking = require("../models/Booking");
 const Room = require("../models/Room");
+const Guest = require("../models/Guest");
 
 // Create a new booking
 const createBooking = async (req, res) => {
-  const { roomType, checkIn, checkOut } = req.body;
+  const {
+    roomType,
+    checkInDate,
+    checkOutDate,
+    guestName,
+    guestEmail,
+    guestPhone,
+    total,
+  } = req.body;
+
+  let guest;
   try {
     const room = await Room.find({ roomType: roomType });
+
+    // Check for the required room type
     if (!room)
       return res.status(404).json({ error: "Room of required type not found" });
 
     // Check if the room is available for the check-in and check-out dates
     let availableRoom = await Booking.findOne({
-      room: room._id, // Room of the required type
+      roomType: roomType, // Room of the required type
       checkOut: { $lte: req.body.checkIn }, // Room checks out before the requested check-in
       checkIn: { $gte: req.body.checkOut }, // Room checks in after the requested check-out
     });
@@ -20,19 +33,34 @@ const createBooking = async (req, res) => {
       return res.status(404).json({
         error: "Room of required type is not available for the requested dates",
       });
-    // Calculate the total price
-    const roomRate = room.pricePerNight;
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-    const totalDays = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24); // Calculate the number of days
-    const totalPrice = roomRate * totalDays;
+
+    // Check if the user is logged in
+    if (!req.user._id) {
+      // Check if the guest already exists
+      guest = await Guest.findOne({
+        guestName: guestName,
+        guestEmail: guestEmail,
+      });
+
+      // Create a new guest if the guest does not exist
+      if (!guest) {
+        guest = new Guest({
+          guestName: guestName,
+          guestEmail: guestEmail,
+          guestPhone: guestPhone,
+        });
+        await guest.save();
+      }
+    }
 
     // Create a new booking
     const booking = new Booking({
-      room: room._id,
+      guest: guest._id ?? "",
+      user: req.user._id ?? "",
+      room: availableRoom._id,
       checkInDate: checkInDate,
       checkOutDate: checkOutDate,
-      totalPrice: totalPrice,
+      totalPrice: total,
     });
 
     await booking.save();
@@ -97,12 +125,14 @@ const checkRoomAvailability = async (req, res) => {
     if (!room)
       return res.status(404).json({ error: "Room of required type not found" });
 
+    console.log(room);
     // Check if the room is available for the given dates
-    const availableRoom = await Room.findOne({
+    const bookedRoom = await Booking.findOne({
       room: room._id,
-      checkOut: { $lte: new Date(checkIn) }, // Room checks out before requested check-in
-      checkIn: { $gte: new Date(checkOut) }, // Room checks in after requested check-out
+      checkOut: { $gte: new Date(checkIn) }, // Room checks out before requested check-in
+      checkIn: { $lte: new Date(checkOut) }, // Room checks in after requested check-out
     });
+    console.log(bookedRoom);
 
     if (!availableRoom) {
       return res.status(404).json({
