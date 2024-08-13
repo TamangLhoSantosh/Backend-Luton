@@ -119,18 +119,15 @@ const deleteBookingById = async (req, res) => {
 
 // Check room availability
 const checkRoomAvailability = async (req, res) => {
-  const { roomType, checkIn, checkOut } = req.body;
+  const { roomType, checkInDate, checkOutDate } = req.body;
   try {
     const rooms = await Room.find({ roomType: roomType });
     if (!rooms)
       return res.status(404).json({ error: "Room of required type not found" });
 
-    console.log(rooms);
-
     const bookings = await Booking.find({
-      room: { $in: rooms.map((room) => room._id) },
-      checkOut: { $gte: new Date(checkIn) }, // Room checks out before requested check-in
-      checkIn: { $lte: new Date(checkOut) }, // Room checks in after requested check-out
+      checkOutDate: { $gte: checkInDate },
+      checkInDate: { $lte: checkOutDate },
     });
 
     // Get booked room IDs
@@ -148,7 +145,7 @@ const checkRoomAvailability = async (req, res) => {
       });
     }
 
-    res.status(200).json({ availableRooms });
+    res.status(200).json({ message: "Rooms available" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
