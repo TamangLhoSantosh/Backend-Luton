@@ -3,8 +3,35 @@ const domain = "http://localhost:8000";
 
 // Get all users
 const getAllUsers = async (req, res) => {
+  // Extract query parameters
+  const { role, isActive } = req.query;
   try {
-    const users = await User.find();
+    // Build the query object
+    const filters = {};
+    if (role) filters.role = role;
+    if (isActive) filters.isActive = isActive;
+
+    // Find users based on the filters
+    const users = await User.find(filters, { role: { $ne: "admin" } });
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Search user
+const searchUser = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const users = await User.find({
+      $or: [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ],
+      role: { $ne: "admin" },
+    });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -49,6 +76,7 @@ const deleteUserById = async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  searchUser,
   getUserById,
   updateUserById,
   deleteUserById,

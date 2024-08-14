@@ -26,7 +26,6 @@ const getAllRooms = async (req, res) => {
     if (req.query.availability) {
       filters.availability = req.query.availability;
     }
-    console.log(filters);
 
     // Find rooms based on filters and populate the roomType
     const rooms = await Room.find(filters).populate("roomType");
