@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const roomTypeController = require("../controllers/RoomTypeController");
+const auth = require("../middleware/authMiddleware");
+const { authorizeRole } = require("../middleware/authorizationMiddleware");
 
 /**
  * @description To get all room types
@@ -27,7 +29,12 @@ router.get("/:id", roomTypeController.getRoomTypeById);
  * @type POST
  * @return response
  */
-router.post("/", roomTypeController.createRoomType);
+router.post(
+  "/",
+  auth,
+  authorizeRole("admin"),
+  roomTypeController.createRoomType
+);
 
 /**
  * @description To update a room type by ID
@@ -36,7 +43,12 @@ router.post("/", roomTypeController.createRoomType);
  * @type PUT
  * @return response
  */
-router.put("/:id", roomTypeController.updateRoomType);
+router.put(
+  "/:id",
+  auth,
+  authorizeRole("admin"),
+  roomTypeController.updateRoomType
+);
 
 /**
  * @description To delete a room type by ID
@@ -45,6 +57,11 @@ router.put("/:id", roomTypeController.updateRoomType);
  * @type DELETE
  * @return response
  */
-router.delete("/:id", roomTypeController.deleteRoomType);
+router.delete(
+  "/:id",
+  auth,
+  authorizeRole("admin"),
+  roomTypeController.deleteRoomType
+);
 
 module.exports = router;

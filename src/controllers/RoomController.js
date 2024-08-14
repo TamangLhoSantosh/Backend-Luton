@@ -11,10 +11,25 @@ const createRoom = async (req, res) => {
   }
 };
 
-// Get all rooms
+/// Get all rooms
 const getAllRooms = async (req, res) => {
   try {
-    const rooms = await Room.find();
+    const filters = {};
+
+    // Extract filters from query parameters
+    if (req.query.roomType) {
+      filters.roomType = req.query.roomType;
+    }
+    if (req.query.roomNumber) {
+      filters.roomNumber = req.query.roomNumber;
+    }
+    if (req.query.availability) {
+      filters.availability = req.query.availability;
+    }
+    console.log(filters);
+
+    // Find rooms based on filters and populate the roomType
+    const rooms = await Room.find(filters).populate("roomType");
     res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ error: error.message });

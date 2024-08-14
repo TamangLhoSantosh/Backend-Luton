@@ -4,6 +4,8 @@ const {
   subscribeUser,
   unsubscribeUser,
 } = require("../controllers/SubscribedController");
+const auth = require("../middleware/authMiddleware");
+const { authorizeRole } = require("../middleware/authorizationMiddleware");
 
 /**
  * @description Subscribe a user
@@ -22,5 +24,14 @@ router.post("/", subscribeUser);
  * @return response
  */
 router.post("/unsubscribe", unsubscribeUser);
+
+/**
+ * @description Get all subscribed users
+ * @api /subscribe
+ * @access PUBLIC
+ * @type GET
+ * @return response
+ */
+router.get("/", auth, authorizeRole("admin"), unsubscribeUser);
 
 module.exports = router;

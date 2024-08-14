@@ -31,6 +31,14 @@ const bookingSchema = new mongoose.Schema({
     enum: ["open", "booked", "checked-in", "checked-out", "cancelled"],
     default: "open",
   },
+  createdAt: {
+    type: String,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: String,
+    default: Date.now,
+  },
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
