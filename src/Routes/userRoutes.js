@@ -33,14 +33,14 @@ router.get(
   userController.searchUser
 );
 
-/**
+/**x
  * @description To get all user
  * @api /user/:id
  * @access PUBLIC
  * @type GET
  * @return response
  */
-router.get("/:id", auth, userController.getUserById);
+router.get("/by/:id", auth, userController.getUserById);
 
 /**
  * @description To get all user

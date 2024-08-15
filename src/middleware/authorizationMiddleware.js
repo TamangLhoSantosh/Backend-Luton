@@ -12,10 +12,9 @@ function authorizeRole(...role) {
       const userRole = String(user.role).trim();
       const requiredRole = String(role).trim();
 
-      if (requiredRole.includes(userRole)) {
+      if (!requiredRole.includes(userRole)) {
         return res.sendStatus(403); // Forbidden if user does not have the required role
       }
-
       next();
     } catch (error) {
       res.status(500).json({ msg: error.message });

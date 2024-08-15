@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { registerUser, loginUser } = require("../controllers/AuthController");
+const {
+  registerUser,
+  loginUser,
+  getUserFromToken,
+} = require("../controllers/AuthController");
 const { profileImage } = require("../middleware/uploadMiddleware");
 
 /**
@@ -20,5 +24,14 @@ router.post("/register", profileImage.single("profileImage"), registerUser);
  * @return response
  */
 router.post("/login", loginUser);
+
+/**
+ * @description To get user from the token
+ * @api /auth/getUser
+ * @access PUBLIC
+ * @type POST
+ * @return response
+ */
+router.post("/getUser", getUserFromToken);
 
 module.exports = router;

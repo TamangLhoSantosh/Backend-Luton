@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
     if (isActive) filters.isActive = isActive;
 
     // Find users based on the filters
-    const users = await User.find(filters, { role: { $ne: "admin" } });
+    const users = await User.find({ ...filters, role: { $ne: "admin" } });
 
     res.status(200).json(users);
   } catch (error) {
@@ -40,6 +40,7 @@ const searchUser = async (req, res) => {
 
 // Get a user by ID
 const getUserById = async (req, res) => {
+  console.log(req.params.id);
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });

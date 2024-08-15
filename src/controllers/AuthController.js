@@ -72,7 +72,7 @@ const loginUser = async (req, res) => {
         if (err) throw err;
         res.json({
           msg: "User logged in successfully",
-          token: `Bearer ${token}`,
+          token: `${token}`,
           user: user,
         });
       }
@@ -83,7 +83,21 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Get user from token
+function getUserFromToken(req, res) {
+  const token = req.body.params;
+  const secret = process.env.JWT_SECRET;
+  try {
+    // Verify and decode the token
+    const decoded = jwt.verify(token, secret);
+    return res.status(200).json({ user: decoded.user });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
+  getUserFromToken,
 };
