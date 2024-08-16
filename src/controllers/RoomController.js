@@ -3,7 +3,13 @@ const Room = require("../models/Room");
 // Create a new room
 const createRoom = async (req, res) => {
   try {
-    const room = new Room(req.body);
+    // Check if room already exists
+    let room = await Room.findOne({ roomNumber: req.body.roomNumber });
+    if (room) {
+      return res.status(400).json({ error: "Room already exists" });
+    }
+
+    room = new Room(req.body);
     await room.save();
     res.status(201).json(room);
   } catch (error) {

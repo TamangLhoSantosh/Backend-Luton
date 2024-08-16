@@ -40,7 +40,7 @@ router.get(
  * @type GET
  * @return response
  */
-router.get("/by/:id", auth, userController.getUserById);
+router.get("/:id", auth, userController.getUserById);
 
 /**
  * @description To get all user
