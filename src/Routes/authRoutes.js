@@ -6,6 +6,7 @@ const {
   getUserFromToken,
 } = require("../controllers/AuthController");
 const { profileImage } = require("../middleware/uploadMiddleware");
+const auth = require("../middleware/authMiddleware");
 
 /**
  * @description To create users
@@ -32,6 +33,6 @@ router.post("/login", loginUser);
  * @type POST
  * @return response
  */
-router.post("/getUser", getUserFromToken);
+router.post("/getUser", auth, getUserFromToken);
 
 module.exports = router;
