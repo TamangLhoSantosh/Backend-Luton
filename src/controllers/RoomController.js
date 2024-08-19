@@ -44,7 +44,7 @@ const getAllRooms = async (req, res) => {
 // Get a room by ID
 const getRoomById = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id);
+    const room = await Room.findById(req.params.id).populate("roomType");
     if (!room) return res.status(404).json({ error: "Room not found" });
     res.status(200).json(room);
   } catch (error) {

@@ -8,7 +8,7 @@ const { authorizeRole } = require("../middleware/authorizationMiddleware");
 /**
  * @description To get all user
  * @api /user
- * @access PUBLIC
+ * @access RESTRICTED TO ADMIN AND STAFF
  * @type GET
  * @return response
  */
@@ -22,7 +22,7 @@ router.get(
 /**
  * @description To get all user
  * @api /user/search
- * @access PUBLIC
+ * @access RESTRICTED TO ADMIN AND STAFF
  * @type GET
  * @return response
  */
@@ -36,7 +36,7 @@ router.get(
 /**x
  * @description To get all user
  * @api /user/:id
- * @access PUBLIC
+ * @access AUTHENTICATED USERS
  * @type GET
  * @return response
  */
@@ -45,7 +45,7 @@ router.get("/:id", auth, userController.getUserById);
 /**
  * @description To get all user
  * @api /user/:id
- * @access PUBLIC
+ * @access AUTHENTICATED USERS
  * @type PUT
  * @return response
  */
@@ -54,7 +54,7 @@ router.put("/:id", auth, userController.updateUserById);
 /**
  * @description To get all user
  * @api /user/:id
- * @access PUBLIC
+ * @access AUTHENTICATED USERS
  * @type DELETE
  * @return response
  */

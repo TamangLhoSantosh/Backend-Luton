@@ -29,7 +29,7 @@ router.post("/login", loginUser);
 /**
  * @description To get user from the token
  * @api /auth/getUser
- * @access PUBLIC
+ * @access AUTHENTICATED USERS
  * @type POST
  * @return response
  */

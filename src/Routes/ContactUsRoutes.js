@@ -20,7 +20,7 @@ router.post("/", contactUs);
 /**
  * @description To get all contactus
  * @api /contact-us
- * @access PUBLIC
+ * @access ADMIN
  * @type GET
  * @return response
  */
@@ -29,7 +29,7 @@ router.get("/", auth, authorizeRole("admin"), getContactUs);
 /**
  * @description To get contactus by id
  * @api /contact-us
- * @access PUBLIC
+ * @access ADMIN
  * @type GET
  * @return response
  */

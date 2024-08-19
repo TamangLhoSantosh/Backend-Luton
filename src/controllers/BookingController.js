@@ -74,7 +74,25 @@ const createBooking = async (req, res) => {
 // Get all bookings
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate("room");
+    const filters = {};
+
+    // Extract filters from query parameters
+    if (req.query.user) {
+      filters.user = req.query.user;
+    }
+    if (req.query.status) {
+      filters.status = req.query.status;
+    }
+    if (req.query.bookingDate) {
+      filters.createdAt = req.query.bookingDate;
+    }
+    if (req.query.roomType) {
+      filters.roomType = req.query.roomType;
+    }
+
+    // Find rooms based on filters and join with the user and room
+    const bookings = await Booking.find(filters).populate("user");
+
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -151,6 +169,40 @@ const checkRoomAvailability = async (req, res) => {
   }
 };
 
+// Get available room
+const getAvailableRoom = async (req, res) => {
+  const { roomType, checkInDate, checkOutDate } = req.body;
+  try {
+    const rooms = await Room.find({ roomType: roomType });
+    if (!rooms)
+      return res.status(404).json({ error: "Room of required type not found" });
+
+    const bookings = await Booking.find({
+      checkOutDate: { $gte: checkInDate },
+      checkInDate: { $lte: checkOutDate },
+    });
+
+    // Get booked room IDs
+    const bookedRoomIds = bookings.map((booking) => booking.room.toString());
+
+    // Filter out booked rooms to get available rooms
+    const availableRooms = rooms.filter(
+      (room) => !bookedRoomIds.includes(room._id.toString())
+    );
+
+    if (availableRooms.length === 0) {
+      return res.status(404).json({
+        error:
+          "No rooms of the required type are available for the requested dates",
+      });
+    }
+
+    res.status(200).json(availableRooms);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createBooking,
   getAllBookings,
@@ -158,4 +210,5 @@ module.exports = {
   updateBookingById,
   deleteBookingById,
   checkRoomAvailability,
+  getAvailableRoom,
 };

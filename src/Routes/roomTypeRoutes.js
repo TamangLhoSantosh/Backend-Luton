@@ -25,7 +25,7 @@ router.get("/:id", roomTypeController.getRoomTypeById);
 /**
  * @description To create a new room type
  * @api /room-types
- * @access PUBLIC
+ * @access ADMIN
  * @type POST
  * @return response
  */
@@ -39,7 +39,7 @@ router.post(
 /**
  * @description To update a room type by ID
  * @api /room-types/:id
- * @access PUBLIC
+ * @access ADMIN
  * @type PUT
  * @return response
  */
@@ -53,7 +53,7 @@ router.put(
 /**
  * @description To delete a room type by ID
  * @api /room-types/:id
- * @access PUBLIC
+ * @access ADMIN
  * @type DELETE
  * @return response
  */

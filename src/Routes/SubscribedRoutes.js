@@ -28,7 +28,7 @@ router.post("/unsubscribe", unsubscribeUser);
 /**
  * @description Get all subscribed users
  * @api /subscribe
- * @access PUBLIC
+ * @access ADMIN
  * @type GET
  * @return response
  */

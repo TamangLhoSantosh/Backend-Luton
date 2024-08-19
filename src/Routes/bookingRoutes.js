@@ -25,21 +25,35 @@ router.post("/check-availability", bookingController.checkRoomAvailability);
 /**
  * @description To get all bookings
  * @api /booking
- * @access PUBLIC
+ * @access RESTRICTED TO ADMIN AND STAFF
  * @type GET
  * @return response
  */
 router.get(
   "/",
   auth,
-  authorizeRole("staff" || "admin"),
+  authorizeRole("staff", "admin"),
   bookingController.getAllBookings
+);
+
+/**
+ * @description To get all bookings
+ * @api /booking
+ * @access RESTRICTED TO ADMIN AND STAFF
+ * @type GET
+ * @return response
+ */
+router.post(
+  "/check-availability",
+  auth,
+  authorizeRole("staff", "admin"),
+  bookingController.getAvailableRoom
 );
 
 /**
  * @description To get specific bookings
  * @api /booking/:id
- * @access PUBLIC
+ * @access RESTRICTED TO AUTHENTICATED USERS
  * @type Get
  * @return response
  */
@@ -48,7 +62,7 @@ router.get("/:id", auth, bookingController.getBookingById);
 /**
  * @description To update bookings
  * @api /booking/:id
- * @access PUBLIC
+ * @access RESTRICTED TO AUTHENTICATED USERS
  * @type PUT
  * @return response
  */
@@ -57,7 +71,7 @@ router.put("/:id", auth, bookingController.updateBookingById);
 /**
  * @description To delete bookings
  * @api /booking/:id
- * @access PUBLIC
+ * @access RESTRICTED TO AUTHENTICATED USERS
  * @type DELETE
  * @return response
  */
