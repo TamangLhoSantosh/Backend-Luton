@@ -30,11 +30,11 @@ router.post("/check-availability", bookingController.checkRoomAvailability);
  * @type GET
  * @return response
  */
-router.get(
-  "/",
+router.post(
+  "/check-availability",
   auth,
   authorizeRole("staff", "admin"),
-  bookingController.getAllBookings
+  bookingController.getAvailableRoom
 );
 
 /**
@@ -44,11 +44,11 @@ router.get(
  * @type GET
  * @return response
  */
-router.post(
-  "/check-availability",
+router.get(
+  "/",
   auth,
   authorizeRole("staff", "admin"),
-  bookingController.getAvailableRoom
+  bookingController.getAllBookings
 );
 
 /**

@@ -26,8 +26,7 @@ const searchUser = async (req, res) => {
     const { search } = req.query;
     const users = await User.find({
       $or: [
-        { firstName: { $regex: search, $options: "i" } },
-        { lastName: { $regex: search, $options: "i" } },
+        { fullName: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
       ],
       role: { $ne: "admin" },

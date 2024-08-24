@@ -1,6 +1,7 @@
 const Booking = require("../models/Booking");
 const Room = require("../models/Room");
 const Guest = require("../models/Guest");
+const User = require("../models/User");
 
 // Create a new booking
 const createBooking = async (req, res) => {
@@ -86,22 +87,49 @@ const getAllBookings = async (req, res) => {
     const filters = {};
 
     // Extract filters from query parameters
+    // Filter by user
     if (req.query.user) {
-      filters.user = req.query.user;
+      // Get users matching the query
+      const users = await User.find({
+        $or: [
+          { fullName: { $regex: req.query.user, $options: "i" } },
+          { email: { $regex: req.query.user, $options: "i" } },
+        ],
+      });
+
+      // Get user IDs
+      const userIds = users.map((user) => user._id);
+
+      // Get guests matching the query
+      const guests = await Guest.find({
+        $or: [
+          { guestName: { $regex: req.query.user, $options: "i" } },
+          { guestEmail: { $regex: req.query.user, $options: "i" } },
+        ],
+      });
+
+      // Get guest IDs
+      const guestIds = guests.map((guest) => guest._id);
+
+      // Filter bookings by user and guest IDs
+      filters.$or = [{ user: { $in: userIds } }, { guest: { $in: guestIds } }];
     }
+
+    // Filter by status
     if (req.query.status) {
       filters.status = req.query.status;
     }
-    if (req.query.bookingDate) {
-      filters.createdAt = req.query.bookingDate;
-    }
+
+    // Filter by room type
     if (req.query.roomType) {
-      filters.roomType = req.query.roomType;
+      const rooms = await Room.find({ roomType: req.query.roomType });
+      filters.room = { $in: rooms.map((room) => room._id) };
     }
 
     // Find rooms based on filters and join with the user and room
     const bookings = await Booking.find(filters)
       .populate("user")
+      .populate("guest")
       .populate("room");
 
     res.status(200).json(bookings);
