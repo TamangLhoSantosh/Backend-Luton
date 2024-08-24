@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/BookingController");
 const auth = require("../middleware/authMiddleware");
+const optionalAuth = require("../middleware/optionalAuthMiddleware");
 const { authorizeRole } = require("../middleware/authorizationMiddleware");
 
 /**
@@ -11,7 +12,7 @@ const { authorizeRole } = require("../middleware/authorizationMiddleware");
  * @type POST
  * @return response
  */
-router.post("/", bookingController.createBooking);
+router.post("/", optionalAuth, bookingController.createBooking);
 
 /**
  * @description To check the availability of a room

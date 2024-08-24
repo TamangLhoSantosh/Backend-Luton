@@ -8,59 +8,68 @@ const createBooking = async (req, res) => {
     roomType,
     checkInDate,
     checkOutDate,
-    guestName,
     guestEmail,
+    guestName,
     guestPhone,
-    total,
+    totalPrice,
   } = req.body;
 
-  let guest;
   try {
-    const room = await Room.find({ roomType: roomType });
-
-    // Check for the required room type
-    if (!room)
+    // Get all rooms of the required type
+    const rooms = await Room.find({ roomType: roomType });
+    if (!rooms)
       return res.status(404).json({ error: "Room of required type not found" });
 
-    // Check if the room is available for the check-in and check-out dates
-    let availableRoom = await Booking.findOne({
-      roomType: roomType, // Room of the required type
-      checkOut: { $lte: req.body.checkIn }, // Room checks out before the requested check-in
-      checkIn: { $gte: req.body.checkOut }, // Room checks in after the requested check-out
+    // Get all bookings for the required room type
+    const bookings = await Booking.find({
+      checkOutDate: { $gte: checkInDate },
+      checkInDate: { $lte: checkOutDate },
     });
 
-    if (!availableRoom)
+    // Get booked room IDs
+    const bookedRoomIds = bookings.map((booking) => booking.room.toString());
+
+    // Filter out booked rooms to get available rooms
+    const availableRooms = rooms.filter(
+      (room) => !bookedRoomIds.includes(room._id.toString())
+    );
+
+    // Check if any rooms are available
+    if (availableRooms.length === 0) {
       return res.status(404).json({
-        error: "Room of required type is not available for the requested dates",
+        error:
+          "No rooms of the required type are available for the requested dates",
       });
+    }
 
+    let newGuest;
     // Check if the user is logged in
-    if (!req.user._id) {
-      // Check if the guest already exists
-      guest = await Guest.findOne({
-        guestName: guestName,
+    if (!req.user) {
+      // Check for existing guest
+      newGuest = await Guest.findOne({
         guestEmail: guestEmail,
+        guestPhone: guestPhone,
       });
 
-      // Create a new guest if the guest does not exist
-      if (!guest) {
-        guest = new Guest({
-          guestName: guestName,
+      if (!newGuest) {
+        // Create a new guest
+        newGuest = new Guest({
           guestEmail: guestEmail,
+          guestName: guestName,
           guestPhone: guestPhone,
         });
-        await guest.save();
+        await newGuest.save();
       }
     }
 
     // Create a new booking
     const booking = new Booking({
-      guest: guest._id ?? "",
-      user: req.user._id ?? "",
-      room: availableRoom._id,
+      room: availableRooms[0]._id,
+      guest: newGuest ? newGuest._id : null,
+      user: req.user ? req.user.id : null,
       checkInDate: checkInDate,
       checkOutDate: checkOutDate,
-      totalPrice: total,
+      totalPrice: totalPrice,
     });
 
     await booking.save();
@@ -91,7 +100,9 @@ const getAllBookings = async (req, res) => {
     }
 
     // Find rooms based on filters and join with the user and room
-    const bookings = await Booking.find(filters).populate("user");
+    const bookings = await Booking.find(filters)
+      .populate("user")
+      .populate("room");
 
     res.status(200).json(bookings);
   } catch (error) {
