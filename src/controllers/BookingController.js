@@ -149,6 +149,45 @@ const getBookingById = async (req, res) => {
   }
 };
 
+// Get new bookings from the last 7 days
+const getNewBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({
+      createdAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+    });
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get latest bookings (updated in the last 7 days)
+const getLatestUpdate = async (req, res) => {
+  try {
+    const bookings = await Booking.find({
+      updatedAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+    })
+      .populate("user")
+      .populate("guest");
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get the bookings which is not checked out
+const getNotCheckedOutBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({
+      checkInDate: { $lt: Date.now() },
+      checkOutDate: { $gt: Date.now() },
+    });
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Update a booking by ID
 const updateBookingById = async (req, res) => {
   try {
@@ -238,7 +277,34 @@ const getAvailableRoom = async (req, res) => {
 
     res.status(200).json(availableRooms);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get Room Availability
+const getRoomAvailability = async (req, res) => {
+  try {
+    const rooms = await Room.find();
+    const booked = await Booking.find({
+      $and: [
+        { checkInDate: { $gte: Date.now() } },
+        { checkOutDate: { $lte: Date.now() } },
+      ],
+    });
+
+    const bookedRoomsId = booked.map((booking) => booking.room);
+
+    const availableRooms = rooms.filter(
+      (room) => !bookedRoomsId.includes(room._id)
+    );
+
+    const bookedRooms = await Booking.find({
+      checkInDate: Date.now(),
+    });
+
+    res.status(200).json({ availableRooms, bookedRooms });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -246,8 +312,12 @@ module.exports = {
   createBooking,
   getAllBookings,
   getBookingById,
+  getNewBookings,
+  getNotCheckedOutBookings,
+  getLatestUpdate,
   updateBookingById,
   deleteBookingById,
   checkRoomAvailability,
   getAvailableRoom,
+  getRoomAvailability,
 };

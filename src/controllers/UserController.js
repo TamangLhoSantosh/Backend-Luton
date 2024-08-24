@@ -7,12 +7,14 @@ const getAllUsers = async (req, res) => {
   const { role, isActive } = req.query;
   try {
     // Build the query object
-    const filters = {};
+    const filters = {
+      role: { $ne: "admin" },
+    };
     if (role) filters.role = role;
     if (isActive) filters.isActive = isActive;
 
     // Find users based on the filters
-    const users = await User.find({ ...filters, role: { $ne: "admin" } });
+    const users = await User.find({ ...filters });
 
     res.status(200).json(users);
   } catch (error) {
