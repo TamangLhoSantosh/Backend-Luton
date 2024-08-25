@@ -179,8 +179,10 @@ const getLatestUpdate = async (req, res) => {
 const getNotCheckedOutBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({
-      checkInDate: { $lt: Date.now() },
-      checkOutDate: { $gt: Date.now() },
+      $and: [
+        { checkInDate: { $lt: Date.now() } },
+        { checkOutDate: { $gt: Date.now() } },
+      ],
     });
     res.status(200).json(bookings);
   } catch (error) {

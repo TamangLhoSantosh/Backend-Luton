@@ -15,11 +15,11 @@ const bookingSchema = new mongoose.Schema({
     ref: "User",
   },
   checkInDate: {
-    type: String,
+    type: Date,
     required: true,
   },
   checkOutDate: {
-    type: String,
+    type: Date,
     required: true,
   },
   totalPrice: {
@@ -32,12 +32,12 @@ const bookingSchema = new mongoose.Schema({
     default: "open",
   },
   createdAt: {
-    type: String,
-    default: Date.now,
+    type: Date,
+    default: new Date(),
   },
   updatedAt: {
-    type: String,
-    default: Date.now,
+    type: Date,
+    default: new Date(),
   },
 });
 
