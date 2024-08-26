@@ -182,21 +182,6 @@ const getLatestUpdate = async (req, res) => {
   }
 };
 
-// Get the bookings which is not checked out
-const getNotCheckedOutBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find({
-      $and: [
-        { checkInDate: { $lt: today } },
-        { checkOutDate: { $gte: today } },
-      ],
-    });
-    res.status(200).json(bookings);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
 // Update a booking by ID
 const updateBookingById = async (req, res) => {
   try {
@@ -339,7 +324,6 @@ module.exports = {
   getAllBookings,
   getBookingById,
   getNewBookings,
-  getNotCheckedOutBookings,
   getLatestUpdate,
   updateBookingById,
   deleteBookingById,

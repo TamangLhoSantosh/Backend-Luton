@@ -80,20 +80,6 @@ router.get(
 );
 
 /**
- * @description To get bookings from which the user has not checked out
- * @api /booking/bookings-not-checked-out
- * @access RESTRICTED TO ADMIN AND STAFF
- * @type GET
- * @return response
- */
-router.get(
-  "/bookings-not-checked-out",
-  auth,
-  authorizeRole("staff", "admin"),
-  bookingController.getNotCheckedOutBookings
-);
-
-/**
  * @description To get room availability
  * @api /booking/room-availability
  * @access RESTRICTED TO ADMIN AND STAFF
