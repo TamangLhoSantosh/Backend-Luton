@@ -3,6 +3,13 @@ const Room = require("../models/Room");
 const Guest = require("../models/Guest");
 const User = require("../models/User");
 
+// Global variables
+const today = new Date();
+today.setDate(today.getDate() + 1);
+today.setHours(0, 0, 0, 0); // Start of the day
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1); // Start of the next day
+
 // Create a new booking
 const createBooking = async (req, res) => {
   const {
@@ -153,7 +160,7 @@ const getBookingById = async (req, res) => {
 const getNewBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({
-      createdAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+      createdAt: { $gte: new Date() - 7 * 24 * 60 * 60 * 1000 },
     });
     res.status(200).json(bookings);
   } catch (error) {
@@ -165,7 +172,7 @@ const getNewBookings = async (req, res) => {
 const getLatestUpdate = async (req, res) => {
   try {
     const bookings = await Booking.find({
-      updatedAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+      updatedAt: { $gte: new Date() - 7 * 24 * 60 * 60 * 1000 },
     })
       .populate("user")
       .populate("guest");
@@ -180,8 +187,8 @@ const getNotCheckedOutBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({
       $and: [
-        { checkInDate: { $lt: Date.now() } },
-        { checkOutDate: { $gt: Date.now() } },
+        { checkInDate: { $lt: today } },
+        { checkOutDate: { $gte: today } },
       ],
     });
     res.status(200).json(bookings);
@@ -287,24 +294,41 @@ const getAvailableRoom = async (req, res) => {
 const getRoomAvailability = async (req, res) => {
   try {
     const rooms = await Room.find();
-    const booked = await Booking.find({
+
+    // Get all bookings for today
+    const bookedRooms = await Booking.find({
+      checkInDate: {
+        $gte: today,
+        $lt: tomorrow,
+      },
+    });
+
+    const bookedRoomsId = bookedRooms.map((booked) => booked.room);
+
+    // Get the rooms that are occupied today
+    const occupiedRooms = await Booking.find({
       $and: [
-        { checkInDate: { $gte: Date.now() } },
-        { checkOutDate: { $lte: Date.now() } },
+        { checkInDate: { $lt: today } },
+        { checkOutDate: { $gte: today } },
       ],
     });
 
-    const bookedRoomsId = booked.map((booking) => booking.room);
+    const occupiedRoomsId = occupiedRooms.map((occupied) => occupied.room);
 
-    const availableRooms = rooms.filter(
-      (room) => !bookedRoomsId.includes(room._id)
-    );
+    // Get the rooms that are available today
+    let availableRooms = rooms.filter((room) => {
+      const isBooked = bookedRoomsId.some((bookedId) =>
+        bookedId.equals(room._id)
+      );
+      if (isBooked) return false;
 
-    const bookedRooms = await Booking.find({
-      checkInDate: Date.now(),
+      const isOccupied = occupiedRoomsId.some((occupied) =>
+        occupied.equals(room._id)
+      );
+      return !isOccupied;
     });
 
-    res.status(200).json({ availableRooms, bookedRooms });
+    res.status(200).json({ occupiedRooms, availableRooms, bookedRooms });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
