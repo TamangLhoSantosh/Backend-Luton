@@ -8,6 +8,7 @@ dotenv.config();
 
 // Register a new user
 const registerUser = async (req, res) => {
+  console.log(req.body);
   try {
     // Check if email already exists
     let user = await User.findOne({ email: req.body.email });

@@ -52,11 +52,11 @@ const userSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: new Date(),
   },
   updatedAt: {
     type: Date,
-    default: Date.now,
+    default: new Date(),
   },
 });
 
@@ -72,7 +72,7 @@ userSchema.pre("save", async function (next) {
 
 // Update the updatedAt field on every save
 userSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
+  this.updatedAt = new Date();
   next();
 });
 
